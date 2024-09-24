@@ -25,6 +25,9 @@ export async function action({ request }: ActionFunctionArgs) {
 	}
 
 	session.set("isAuthenticated", true);
+	session.set("userID", data.user.id);
+	session.set("authToken", data.jwt);
+
 	return redirect("/lessons", {
 		headers: {
 			"Set-Cookie": await commitSession(session),
