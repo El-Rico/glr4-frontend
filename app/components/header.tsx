@@ -6,7 +6,7 @@ interface HeaderProps {
 
 export default function Header({ isAuthenticated }: HeaderProps) {
 	return (
-		<header className="py-5 border-b mb-5 border-orange-200 flex justify-between">
+		<header className="py-5 border-b mb-5 border-orange-200 flex justify-between items-center">
 			<div className="font-bold uppercase text-2xl">
 				GL<span className="font-thin">Reservations</span>
 			</div>

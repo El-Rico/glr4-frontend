@@ -26,10 +26,6 @@ export async function getLessons(userID: string, authToken: string) {
 			},
 		});
 		const data = await response.json();
-
-		console.log(authToken);
-		console.log(data);
-
 		return data;
 	} catch (error) {
 		console.log(error);

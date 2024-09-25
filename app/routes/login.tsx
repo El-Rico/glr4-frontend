@@ -40,18 +40,18 @@ export default function LoginPage() {
 
 	return (
 		<>
-			<h1 className="font-semibold text-2xl mb-3">Log in</h1>
+			<h1 className="font-semibold text-xl mb-3">Log in</h1>
 			<Form method="post">
 				<div className="space-y-2">
 					<input
-						className="p-2 border border-solid ring:border-sky-600 w-full rounded-md border-gray-700 focus:border-sky-600 focus:ring-sky-600"
+						className="p-2 bg-orange-50 border border-solid ring:border-sky-600 w-full rounded-md border-gray-700 focus:border-sky-600 focus:ring-sky-600"
 						type="text"
 						name="identifier"
 						required
 						placeholder="Gebruikersnaam/emailadres"
 					/>
 					<input
-						className="p-2 border border-solid ring:border-sky-600 w-full rounded-md border-gray-700 focus:border-sky-600 focus:ring-sky-600"
+						className="p-2 bg-orange-50 border border-solid ring:border-sky-600 w-full rounded-md border-gray-700 focus:border-sky-600 focus:ring-sky-600"
 						type="password"
 						name="password"
 						required
