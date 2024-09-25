@@ -9,8 +9,8 @@ import {
 
 import type { LinksFunction, LoaderFunctionArgs } from "@remix-run/node";
 import stylesheet from "~/tailwind.css?url";
-import Header from "./components/header";
 import { getSession } from "./session";
+import Header from "./components/header";
 
 export const links: LinksFunction = () => [
 	{ rel: "stylesheet", href: stylesheet },
