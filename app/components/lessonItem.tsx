@@ -13,10 +13,10 @@ export default function LessonItem({ id, date }: LessonItemProps) {
 	return (
 		<div
 			key={id}
-			className="p-3 rounded-md bg-orange-100 border border-orange-300 border-solid mb-3 flex justify-between align-middle items-center"
+			className="p-3 rounded-md bg-white border border-gray-300 border-solid mb-1 flex justify-between align-middle items-center"
 		>
 			<div className="flex items-baseline gap-4">
-				<div className="text-2xl uppercase font-semibold w-[60px] rounded bg-gray-700 text-white text-center p-2 box-border">
+				<div className="text-2xl uppercase font-semibold w-[60px] rounded bg-zinc-700 text-white text-center p-2 box-border">
 					{format(date, "EEEEEE")}
 				</div>
 				<div className="text-lg font-bold">

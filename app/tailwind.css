@@ -3,17 +3,17 @@
 @tailwind utilities;
 
 html {
-	@apply bg-white text-zinc-950 antialiased;
+	@apply bg-orange-100 text-zinc-950 antialiased;
 }
 
 nav {
-	@apply uppercase text-sm;
+	@apply text-sm;
 }
 
 nav a {
-	@apply bg-orange-100 px-2 py-1 rounded;
+	@apply bg-gray-100 px-3 py-2 rounded;
 }
 
 .active {
-	@apply bg-orange-900 font-bold text-white;
+	@apply bg-zinc-950 font-bold text-white;
 }

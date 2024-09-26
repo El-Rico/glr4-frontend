@@ -27,6 +27,7 @@ export async function action({ request }: ActionFunctionArgs) {
 	session.set("isAuthenticated", true);
 	session.set("userID", data.user.id);
 	session.set("authToken", data.jwt);
+	session.set("firstname", data.user.firstname);
 
 	return redirect("/lessons", {
 		headers: {

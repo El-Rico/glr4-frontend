@@ -46,7 +46,7 @@ export default function App() {
 	return (
 		<div className="mx-auto max-w-xl lg:max-w-7xl">
 			<Header isAuthenticated={loaderData.isAuthenticated} />
-			<main className="mx-auto max-w-3xl">
+			<main className="mx-auto max-w-3xl p-4 bg-white bg-opacity-90 border border-gray-300 rounded-md">
 				<Outlet />
 			</main>
 		</div>
