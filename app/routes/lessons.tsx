@@ -1,23 +1,25 @@
-import { LoaderFunctionArgs } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { LoaderFunctionArgs, redirect } from "@remix-run/node";
+import { Outlet, useLoaderData } from "@remix-run/react";
 import LessonItem from "~/components/lessonItem";
 import { getLessons } from "~/data.server";
 import { getSession } from "~/session";
-
-export async function loader({ request }: LoaderFunctionArgs) {
-	const session = await getSession(request.headers.get("Cookie"));
-	const userID = session.get("userID");
-	const authToken = session.get("authToken");
-
-	const lessons = await getLessons(userID, authToken);
-	return lessons;
-}
 
 interface Lesson {
 	id: string;
 	attributes: {
 		date: string;
 	};
+}
+
+export async function loader({ request }: LoaderFunctionArgs) {
+	const session = await getSession(request.headers.get("Cookie"));
+	const isAuthenticated = session.has("isAuthenticated");
+	if (!isAuthenticated) return redirect("/");
+
+	const userID = session.get("userID");
+	const authToken = session.get("authToken");
+	const lessons = await getLessons(userID, authToken);
+	return lessons;
 }
 
 export default function LessonsPage() {
@@ -32,9 +34,11 @@ export default function LessonsPage() {
 						key={lesson.id}
 						id={lesson.id}
 						date={lesson.attributes.date}
+						showButton={true}
 					/>
 				))}
 			</div>
+			<Outlet />
 		</>
 	);
 }

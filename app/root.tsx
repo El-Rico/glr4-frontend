@@ -43,10 +43,11 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 export default function App() {
 	const loaderData = useLoaderData<typeof loader>();
+
 	return (
 		<div className="mx-auto max-w-xl lg:max-w-7xl">
 			<Header isAuthenticated={loaderData.isAuthenticated} />
-			<main className="mx-auto max-w-3xl p-4 bg-white bg-opacity-90 border border-gray-300 rounded-md">
+			<main className="mx-auto max-w-3xl p-4 bg-black bg-opacity-5 border border-gray-300 rounded-md">
 				<Outlet />
 			</main>
 		</div>
