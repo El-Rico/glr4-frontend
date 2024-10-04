@@ -1,20 +1,19 @@
 import { ArrowLeftIcon } from "@radix-ui/react-icons";
 import { LoaderFunctionArgs } from "@remix-run/node";
-import { Form, Link, useLoaderData } from "@remix-run/react";
+import {
+	Form,
+	Link,
+	Params,
+	useLoaderData,
+	useMatches,
+} from "@remix-run/react";
+import { format, setDefaultOptions } from "date-fns";
+import { nl } from "date-fns/locale";
 import invariant from "invariant";
 import LessonItem from "~/components/lessonItem";
 import { Button } from "~/components/ui/button";
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "~/components/ui/select";
 import { getAvailableLessons, getLesson } from "~/data.server";
 import { getSession } from "~/session";
-import { format, setDefaultOptions } from "date-fns";
-import { nl } from "date-fns/locale";
 
 setDefaultOptions({ locale: nl });
 
@@ -24,6 +23,22 @@ interface Lesson {
 		date: string;
 		datename: string;
 	};
+}
+
+interface UserLessonData {
+	id: number;
+	// attributes: {
+	// 	date: string;
+	// 	datename: string;
+	// };
+}
+
+interface Match {
+	id: string;
+	pathname: string;
+	params: Params<string>;
+	data: any;
+	handle: any;
 }
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
@@ -40,7 +55,17 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 
 export default function ChangeLesson() {
 	const { selectedLesson, availableLessons } = useLoaderData<typeof loader>();
-	console.log(availableLessons);
+	const matches = useMatches();
+	const userLessons = matches.find((match) => match.id === "routes/lessons");
+	const userLessonsData = userLessons?.data;
+
+	invariant(userLessonsData, "User has no lessons");
+	let userLessonsIds: number[] = [];
+	userLessonsData.data.map((lesson: object) => userLessonsIds.push(lesson.id));
+
+	const filteredLessons = availableLessons.data.filter(
+		(lesson: UserLessonData) => !userLessonsIds.includes(lesson.id)
+	);
 
 	return (
 		<>
@@ -56,7 +81,7 @@ export default function ChangeLesson() {
 					<Form className="space-y-2">
 						<select className="w-full border border-gray-300 p-3">
 							<option value="">Kies een beschikbare les</option>
-							{availableLessons.data.map((lesson: Lesson) => (
+							{filteredLessons.map((lesson: Lesson) => (
 								<option key={lesson.id} value={lesson.id}>
 									{format(lesson.attributes.date.toString(), "EEEE")},{" "}
 									{format(lesson.attributes.date.toString(), "d MMMM yyyy")}{" "}
