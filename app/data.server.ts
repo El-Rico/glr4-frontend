@@ -36,10 +36,13 @@ export async function getLessons(userID: string, authToken: string) {
 }
 
 // Get the lessons user is NOT attending
-export async function getAvailableLessons(userID: string, authToken: string) {
+export async function getAvailableLessons(authToken: string) {
 	const query = qs.stringify({
 		sort: ["date:asc"],
-		fields: ["date", "datename"],
+		fields: ["date", "datename", "capacity"],
+		populate: {
+			users_permissions_users: { count: true },
+		},
 		pagination: {
 			pageSize: 10,
 			page: 1,

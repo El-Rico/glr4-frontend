@@ -1,5 +1,5 @@
 import { ArrowLeftIcon } from "@radix-ui/react-icons";
-import { LoaderFunctionArgs } from "@remix-run/node";
+import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import {
 	Form,
 	Link,
@@ -27,10 +27,16 @@ interface Lesson {
 
 interface UserLessonData {
 	id: number;
-	// attributes: {
-	// 	date: string;
-	// 	datename: string;
-	// };
+	attributes: {
+		capacity: number;
+		users_permissions_users: {
+			data: {
+				attributes: {
+					count: number;
+				};
+			};
+		};
+	};
 }
 
 interface Match {
@@ -41,6 +47,17 @@ interface Match {
 	handle: any;
 }
 
+export async function action({ request }: ActionFunctionArgs) {
+	const formData = await request.formData();
+	const data = Object.fromEntries(formData);
+
+	console.log(
+		`Je wilt les ${data.oldLesson} vervangen voor les ${data.newLesson}.`
+	);
+
+	return null;
+}
+
 export async function loader({ params, request }: LoaderFunctionArgs) {
 	const session = await getSession(request.headers.get("Cookie"));
 	const authToken = session.get("authToken");
@@ -48,7 +65,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 
 	invariant(params.lessonID, "Expected lessonID");
 	const selectedLesson = await getLesson(params.lessonID, authToken);
-	const availableLessons = await getAvailableLessons(userID, authToken);
+	const availableLessons = await getAvailableLessons(authToken);
 
 	return { selectedLesson, availableLessons };
 }
@@ -63,9 +80,17 @@ export default function ChangeLesson() {
 	let userLessonsIds: number[] = [];
 	userLessonsData.data.map((lesson: object) => userLessonsIds.push(lesson.id));
 
-	const filteredLessons = availableLessons.data.filter(
+	const filteredLessonsUser = availableLessons.data.filter(
 		(lesson: UserLessonData) => !userLessonsIds.includes(lesson.id)
 	);
+
+	const filteredLessons = filteredLessonsUser.filter(
+		(lesson: UserLessonData) =>
+			lesson.attributes.users_permissions_users.data.attributes.count !==
+			lesson.attributes.capacity
+	);
+
+	console.log(filteredLessons);
 
 	return (
 		<>
@@ -78,8 +103,11 @@ export default function ChangeLesson() {
 						showButton={false}
 					/>
 					<h2 className="font-bold text-lg">verplaatsen naar...</h2>
-					<Form className="space-y-2">
-						<select className="w-full border border-gray-300 p-3">
+					<Form className="space-y-2" method="post">
+						<select
+							name="newLesson"
+							className="w-full border border-gray-300 p-3"
+						>
 							<option value="">Kies een beschikbare les</option>
 							{filteredLessons.map((lesson: Lesson) => (
 								<option key={lesson.id} value={lesson.id}>
@@ -90,6 +118,11 @@ export default function ChangeLesson() {
 								</option>
 							))}
 						</select>
+						<input
+							type="hidden"
+							name="oldLesson"
+							value={selectedLesson.data.id}
+						/>
 
 						<Button className="py-5 bg-sky-600 font-bold w-full text-base">
 							Bevestigen
