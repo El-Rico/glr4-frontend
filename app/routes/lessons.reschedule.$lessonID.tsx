@@ -1,4 +1,4 @@
-import { ArrowLeftIcon } from "@radix-ui/react-icons";
+import { ArrowLeftIcon, ReloadIcon } from "@radix-ui/react-icons";
 import {
 	ActionFunctionArgs,
 	LoaderFunctionArgs,
@@ -10,6 +10,7 @@ import {
 	Params,
 	useLoaderData,
 	useMatches,
+	useNavigation,
 } from "@remix-run/react";
 import { format, setDefaultOptions } from "date-fns";
 import { nl } from "date-fns/locale";
@@ -56,6 +57,8 @@ interface Match {
 }
 
 export async function action({ request }: ActionFunctionArgs) {
+	await new Promise((resolve) => setTimeout(resolve, 1000));
+
 	const session = await getSession(request.headers.get("Cookie"));
 	const authToken = session.get("authToken");
 	const userID = session.get("userID");
@@ -70,17 +73,11 @@ export async function action({ request }: ActionFunctionArgs) {
 		userID
 	);
 
-	console.log(response);
-
 	if (!response) {
 		throw new Response("Oh no! Something went wrong in the action function!", {
 			status: 500,
 		});
 	}
-
-	console.log(
-		`Je wilt les ${data.oldLesson} vervangen voor les ${data.newLesson}.`
-	);
 
 	return redirect("/lessons");
 }
@@ -99,6 +96,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 
 export default function ChangeLesson() {
 	const { selectedLesson, availableLessons } = useLoaderData<typeof loader>();
+	const navigation = useNavigation();
 	const matches = useMatches();
 	const userLessons = matches.find((match) => match.id === "routes/lessons");
 	const userLessonsData = userLessons?.data;
@@ -118,6 +116,8 @@ export default function ChangeLesson() {
 			lesson.attributes.users_permissions_users.data.attributes.count !==
 			lesson.attributes.capacity
 	);
+
+	console.log(navigation.state);
 
 	return (
 		<>
@@ -151,11 +151,22 @@ export default function ChangeLesson() {
 							))}
 						</select>
 
-						<Button className="py-5 bg-sky-600 font-bold w-full text-base">
-							Bevestigen
-						</Button>
+						{navigation.state === "idle" ? (
+							<Button
+								type="submit"
+								className="py-5 bg-sky-600 font-bold w-full text-base"
+							>
+								Bevestigen
+							</Button>
+						) : (
+							<Button disabled className="py-5 w-full text-base">
+								<ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+								Even wachten...
+							</Button>
+						)}
+
 						<Button
-							type="submit"
+							type="button"
 							asChild
 							className="font-bold w-full text-base border-gray-900"
 							variant="outline"
