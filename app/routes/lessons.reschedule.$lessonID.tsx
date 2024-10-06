@@ -117,8 +117,6 @@ export default function ChangeLesson() {
 			lesson.attributes.capacity
 	);
 
-	console.log(navigation.state);
-
 	return (
 		<>
 			<div className="fixed flex z-10 inset-0 w-screen h-screen bg-black bg-opacity-60 justify-center items-center">

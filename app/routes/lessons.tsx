@@ -18,7 +18,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 	const userID = session.get("userID");
 	const authToken = session.get("authToken");
-	console.log(authToken);
 	const lessons = await getLessons(userID, authToken);
 	return lessons;
 }
