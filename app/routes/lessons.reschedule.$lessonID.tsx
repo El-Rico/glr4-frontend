@@ -1,5 +1,9 @@
 import { ArrowLeftIcon } from "@radix-ui/react-icons";
-import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
+import {
+	ActionFunctionArgs,
+	LoaderFunctionArgs,
+	redirect,
+} from "@remix-run/node";
 import {
 	Form,
 	Link,
@@ -12,7 +16,11 @@ import { nl } from "date-fns/locale";
 import invariant from "invariant";
 import LessonItem from "~/components/lessonItem";
 import { Button } from "~/components/ui/button";
-import { getAvailableLessons, getLesson } from "~/data.server";
+import {
+	getAvailableLessons,
+	getLesson,
+	rescheduleLesson,
+} from "~/data.server";
 import { getSession } from "~/session";
 
 setDefaultOptions({ locale: nl });
@@ -48,14 +56,33 @@ interface Match {
 }
 
 export async function action({ request }: ActionFunctionArgs) {
+	const session = await getSession(request.headers.get("Cookie"));
+	const authToken = session.get("authToken");
+	const userID = session.get("userID");
+
 	const formData = await request.formData();
 	const data = Object.fromEntries(formData);
+
+	const response = await rescheduleLesson(
+		data.oldLesson,
+		data.newLesson,
+		authToken,
+		userID
+	);
+
+	console.log(response);
+
+	if (!response) {
+		throw new Response("Oh no! Something went wrong in the action function!", {
+			status: 500,
+		});
+	}
 
 	console.log(
 		`Je wilt les ${data.oldLesson} vervangen voor les ${data.newLesson}.`
 	);
 
-	return null;
+	return redirect("/lessons");
 }
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
@@ -81,16 +108,16 @@ export default function ChangeLesson() {
 	userLessonsData.data.map((lesson: object) => userLessonsIds.push(lesson.id));
 
 	const filteredLessonsUser = availableLessons.data.filter(
+		// Filter out current users lessons
 		(lesson: UserLessonData) => !userLessonsIds.includes(lesson.id)
 	);
 
 	const filteredLessons = filteredLessonsUser.filter(
+		// Filter out full lessons
 		(lesson: UserLessonData) =>
 			lesson.attributes.users_permissions_users.data.attributes.count !==
 			lesson.attributes.capacity
 	);
-
-	console.log(filteredLessons);
 
 	return (
 		<>
@@ -104,6 +131,11 @@ export default function ChangeLesson() {
 					/>
 					<h2 className="font-bold text-lg">verplaatsen naar...</h2>
 					<Form className="space-y-2" method="post">
+						<input
+							type="hidden"
+							name="oldLesson"
+							value={selectedLesson.data.id}
+						/>
 						<select
 							name="newLesson"
 							className="w-full border border-gray-300 p-3"
@@ -118,11 +150,6 @@ export default function ChangeLesson() {
 								</option>
 							))}
 						</select>
-						<input
-							type="hidden"
-							name="oldLesson"
-							value={selectedLesson.data.id}
-						/>
 
 						<Button className="py-5 bg-sky-600 font-bold w-full text-base">
 							Bevestigen

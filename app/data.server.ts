@@ -83,3 +83,43 @@ export async function getLesson(lessonID: string, authToken: string) {
 		});
 	}
 }
+
+export async function rescheduleLesson(
+	oldLesson: string,
+	newLesson: string,
+	authToken: string,
+	userID: string
+) {
+	const body: object = {
+		lessons: {
+			disconnect: [
+				{
+					id: oldLesson,
+				},
+			],
+			connect: [
+				{
+					id: newLesson,
+				},
+			],
+		},
+	};
+	try {
+		const response = await fetch(url + `/api/users/${userID}?`, {
+			method: "put",
+			headers: {
+				Authorization: `Bearer ${authToken}`,
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(body),
+		});
+
+		const data = await response.json();
+		return data;
+	} catch (error) {
+		console.log(error);
+		throw new Response("Oh no! Something went wrong!", {
+			status: 500,
+		});
+	}
+}
