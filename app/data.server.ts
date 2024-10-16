@@ -9,6 +9,9 @@ export async function getLessons(userID: string, authToken: string) {
 			users_permissions_users: {
 				$eq: +userID,
 			},
+			date: {
+				$gt: new Date(),
+			},
 		},
 		fields: ["date", "datename"],
 		pagination: {
@@ -39,6 +42,11 @@ export async function getLessons(userID: string, authToken: string) {
 export async function getAvailableLessons(authToken: string) {
 	const query = qs.stringify({
 		sort: ["date:asc"],
+		filters: {
+			date: {
+				$gt: new Date(),
+			},
+		},
 		fields: ["date", "datename", "capacity"],
 		populate: {
 			users_permissions_users: { count: true },
@@ -97,6 +105,39 @@ export async function rescheduleLesson(
 					id: oldLesson,
 				},
 			],
+			connect: [
+				{
+					id: newLesson,
+				},
+			],
+		},
+	};
+	try {
+		const response = await fetch(url + `/api/users/${userID}?`, {
+			method: "put",
+			headers: {
+				Authorization: `Bearer ${authToken}`,
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(body),
+		});
+		const data = await response.json();
+		return data;
+	} catch (error) {
+		console.log(error);
+		throw new Response("Oh no! Something went wrong!", {
+			status: 500,
+		});
+	}
+}
+
+export async function buyLesson(
+	newLesson: string,
+	authToken: string,
+	userID: string
+) {
+	const body: object = {
+		lessons: {
 			connect: [
 				{
 					id: newLesson,

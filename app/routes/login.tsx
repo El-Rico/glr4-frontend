@@ -28,6 +28,7 @@ export async function action({ request }: ActionFunctionArgs) {
 	session.set("userID", data.user.id);
 	session.set("authToken", data.jwt);
 	session.set("firstname", data.user.firstname);
+	session.set("credit", data.user.credit);
 
 	return redirect("/lessons", {
 		headers: {

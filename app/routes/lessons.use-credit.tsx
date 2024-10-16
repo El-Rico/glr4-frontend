@@ -15,9 +15,11 @@ import {
 import { format, setDefaultOptions } from "date-fns";
 import { nl } from "date-fns/locale";
 import invariant from "invariant";
+import CreditItem from "~/components/creditItem";
 import LessonItem from "~/components/lessonItem";
 import { Button } from "~/components/ui/button";
 import {
+	buyLesson,
 	getAvailableLessons,
 	getLesson,
 	rescheduleLesson,
@@ -64,12 +66,9 @@ export async function action({ request }: ActionFunctionArgs) {
 	const formData = await request.formData();
 	const data = Object.fromEntries(formData);
 
-	const response = await rescheduleLesson(
-		data.oldLesson,
-		data.newLesson,
-		authToken,
-		userID
-	);
+	console.log(data);
+
+	const response = await buyLesson(data.newLesson, authToken, userID);
 
 	if (!response) {
 		throw new Response("Oh no! Something went wrong in the action function!", {
@@ -83,24 +82,20 @@ export async function action({ request }: ActionFunctionArgs) {
 export async function loader({ params, request }: LoaderFunctionArgs) {
 	const session = await getSession(request.headers.get("Cookie"));
 	const authToken = session.get("authToken");
-	const userID = session.get("userID");
+	const credit = session.get("credit");
 
-	invariant(params.lessonID, "Expected lessonID");
-	const selectedLesson = await getLesson(params.lessonID, authToken);
 	const availableLessons = await getAvailableLessons(authToken);
 
-	return { selectedLesson, availableLessons };
+	return { availableLessons, credit };
 }
 
-export default function ChangeLesson() {
-	const { selectedLesson, availableLessons } = useLoaderData<typeof loader>();
+export default function BuyLesson() {
+	const { availableLessons, credit } = useLoaderData<typeof loader>();
 	const navigation = useNavigation();
 	const matches = useMatches();
 	const userLessons = matches.find((match) => match.id === "routes/lessons");
 	invariant(userLessons, "No user lessons.");
 	const userLessonsData: UserLessonsData = userLessons.data?.loadedLessons.data;
-
-	console.log(userLessonsData);
 
 	invariant(userLessonsData, "User has no lessons");
 	let userLessonsIds: number[] = [];
@@ -122,19 +117,9 @@ export default function ChangeLesson() {
 		<>
 			<div className="fixed flex z-10 inset-0 w-screen h-screen bg-black bg-opacity-60 justify-center items-center">
 				<div className="z-20 bg-white p-5 max-w-[80%] space-y-3">
-					<h2 className="font-bold text-lg">Deze les...</h2>
-					<LessonItem
-						id={selectedLesson.data.id}
-						date={selectedLesson.data.attributes.date}
-						showButton={false}
-					/>
-					<h2 className="font-bold text-lg">verplaatsen naar...</h2>
+					<CreditItem credit={credit} />
+					<h2 className="font-bold text-lg">Kies een les voor 1 credit:</h2>
 					<Form className="space-y-2" method="post">
-						<input
-							type="hidden"
-							name="oldLesson"
-							value={selectedLesson.data.id}
-						/>
 						<select
 							name="newLesson"
 							className="w-full border border-gray-300 p-3"

@@ -1,5 +1,6 @@
 import { LoaderFunctionArgs, redirect } from "@remix-run/node";
 import { Outlet, useLoaderData } from "@remix-run/react";
+import CreditItem from "~/components/creditItem";
 import LessonItem from "~/components/lessonItem";
 import { getLessons } from "~/data.server";
 import { getSession } from "~/session";
@@ -18,17 +19,19 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 	const userID = session.get("userID");
 	const authToken = session.get("authToken");
+	const credit = session.get("credit");
 	const lessons = await getLessons(userID, authToken);
-	return lessons;
+	return { loadedLessons: lessons, credit: credit };
 }
 
 export default function LessonsPage() {
-	const loadedLessons = useLoaderData<typeof loader>();
+	const { loadedLessons, credit } = useLoaderData<typeof loader>();
 
 	return (
 		<>
 			<h1 className="font-semibold text-xl mb-3">Je aankomende lessen</h1>
 			<div>
+				{credit > 0 && <CreditItem credit={credit} showButton={true} />}
 				{loadedLessons.data.map((lesson: Lesson) => (
 					<LessonItem
 						key={lesson.id}
