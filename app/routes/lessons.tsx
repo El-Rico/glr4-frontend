@@ -29,9 +29,9 @@ export default function LessonsPage() {
 
 	return (
 		<>
+			{credit > 0 && <CreditItem credit={credit} showButton={true} />}
 			<h1 className="font-semibold text-xl mb-3">Je aankomende lessen</h1>
 			<div>
-				{credit > 0 && <CreditItem credit={credit} showButton={true} />}
 				{loadedLessons.data.map((lesson: Lesson) => (
 					<LessonItem
 						key={lesson.id}
