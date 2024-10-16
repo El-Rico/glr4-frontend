@@ -66,8 +66,6 @@ export async function action({ request }: ActionFunctionArgs) {
 	const formData = await request.formData();
 	const data = Object.fromEntries(formData);
 
-	console.log(data);
-
 	const response = await buyLesson(data.newLesson, authToken, userID);
 
 	if (!response) {

@@ -100,8 +100,6 @@ export default function ChangeLesson() {
 	invariant(userLessons, "No user lessons.");
 	const userLessonsData: UserLessonsData = userLessons.data?.loadedLessons.data;
 
-	console.log(userLessonsData);
-
 	invariant(userLessonsData, "User has no lessons");
 	let userLessonsIds: number[] = [];
 	userLessonsData.map((lesson: object) => userLessonsIds.push(lesson.id));
