@@ -54,6 +54,11 @@ interface UserLessonsData {
 	};
 }
 
+interface FormData {
+	oldLesson: string;
+	newLesson: string;
+}
+
 export async function action({ request }: ActionFunctionArgs) {
 	await new Promise((resolve) => setTimeout(resolve, 1000));
 
@@ -62,11 +67,11 @@ export async function action({ request }: ActionFunctionArgs) {
 	const userID = session.get("userID");
 
 	const formData = await request.formData();
-	const data = Object.fromEntries(formData);
+	const data: FormData = Object.fromEntries(formData);
 
 	const response = await rescheduleLesson(
-		data.oldLesson,
-		data.newLesson,
+		parseInt(data.oldLesson),
+		parseInt(data.newLesson),
 		authToken,
 		userID
 	);
@@ -136,6 +141,7 @@ export default function ChangeLesson() {
 						<select
 							name="newLesson"
 							className="w-full border border-gray-300 p-3"
+							required
 						>
 							<option value="">Kies een beschikbare les</option>
 							{filteredLessons.map((lesson: Lesson) => (

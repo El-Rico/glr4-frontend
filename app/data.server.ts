@@ -15,7 +15,7 @@ export async function getLessons(userID: string, authToken: string) {
 		},
 		fields: ["date", "datename"],
 		pagination: {
-			pageSize: 10,
+			pageSize: 15,
 			page: 1,
 		},
 		status: "published",
@@ -40,19 +40,32 @@ export async function getLessons(userID: string, authToken: string) {
 
 // Get the lessons user is NOT attending
 export async function getAvailableLessons(authToken: string) {
+	const dateStart = new Date();
+	let dateEnd = new Date();
+	dateEnd = new Date(dateEnd.setMonth(dateEnd.getMonth() + 2));
+
 	const query = qs.stringify({
 		sort: ["date:asc"],
 		filters: {
-			date: {
-				$gt: new Date(),
-			},
+			$and: [
+				{
+					date: {
+						$gt: dateStart,
+					},
+				},
+				{
+					date: {
+						$lt: dateEnd,
+					},
+				},
+			],
 		},
 		fields: ["date", "datename", "capacity"],
 		populate: {
 			users_permissions_users: { count: true },
 		},
 		pagination: {
-			pageSize: 10,
+			pageSize: 80,
 			page: 1,
 		},
 		status: "published",
@@ -93,8 +106,8 @@ export async function getLesson(lessonID: string, authToken: string) {
 }
 
 export async function rescheduleLesson(
-	oldLesson: string,
-	newLesson: string,
+	oldLesson: number,
+	newLesson: number,
 	authToken: string,
 	userID: string
 ) {
@@ -132,11 +145,13 @@ export async function rescheduleLesson(
 }
 
 export async function buyLesson(
-	newLesson: string,
+	credit: number,
+	newLesson: number,
 	authToken: string,
 	userID: string
 ) {
 	const body: object = {
+		credit: credit - 1,
 		lessons: {
 			connect: [
 				{

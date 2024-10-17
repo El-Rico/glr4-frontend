@@ -7,7 +7,6 @@ import {
 import {
 	Form,
 	Link,
-	Params,
 	useLoaderData,
 	useMatches,
 	useNavigation,
@@ -16,15 +15,9 @@ import { format, setDefaultOptions } from "date-fns";
 import { nl } from "date-fns/locale";
 import invariant from "invariant";
 import CreditItem from "~/components/creditItem";
-import LessonItem from "~/components/lessonItem";
 import { Button } from "~/components/ui/button";
-import {
-	buyLesson,
-	getAvailableLessons,
-	getLesson,
-	rescheduleLesson,
-} from "~/data.server";
-import { getSession } from "~/session";
+import { buyLesson, getAvailableLessons } from "~/data.server";
+import { commitSession, getSession } from "~/session";
 
 setDefaultOptions({ locale: nl });
 
@@ -56,17 +49,27 @@ interface UserLessonsData {
 	};
 }
 
+interface FormData {
+	currentCredit: string;
+	newLesson: string;
+}
+
 export async function action({ request }: ActionFunctionArgs) {
 	await new Promise((resolve) => setTimeout(resolve, 1000));
 
 	const session = await getSession(request.headers.get("Cookie"));
 	const authToken = session.get("authToken");
-	const userID = session.get("userID");
+	const userID: string = session.get("userID");
 
 	const formData = await request.formData();
-	const data = Object.fromEntries(formData);
+	const data: FormData = Object.fromEntries(formData);
 
-	const response = await buyLesson(data.newLesson, authToken, userID);
+	const response = await buyLesson(
+		parseInt(data.currentCredit),
+		parseInt(data.newLesson),
+		authToken,
+		userID
+	);
 
 	if (!response) {
 		throw new Response("Oh no! Something went wrong in the action function!", {
@@ -74,7 +77,14 @@ export async function action({ request }: ActionFunctionArgs) {
 		});
 	}
 
-	return redirect("/lessons");
+	// return redirect("/lessons");
+	session.set("credit", parseInt(data.currentCredit) - 1);
+
+	return redirect("/lessons", {
+		headers: {
+			"Set-Cookie": await commitSession(session),
+		},
+	});
 }
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
@@ -118,9 +128,11 @@ export default function BuyLesson() {
 					<CreditItem credit={credit} />
 					<h2 className="font-bold text-lg">Kies een les voor 1 credit:</h2>
 					<Form className="space-y-2" method="post">
+						<input type="hidden" name="currentCredit" value={credit} />
 						<select
 							name="newLesson"
 							className="w-full border border-gray-300 p-3"
+							required
 						>
 							<option value="">Kies een beschikbare les</option>
 							{filteredLessons.map((lesson: Lesson) => (
