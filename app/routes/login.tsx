@@ -1,5 +1,5 @@
 import { ActionFunctionArgs, redirect } from "@remix-run/node";
-import { Form, useActionData } from "@remix-run/react";
+import { Form, Link, useActionData } from "@remix-run/react";
 import { getSession, commitSession } from "~/session";
 
 export async function action({ request }: ActionFunctionArgs) {
@@ -40,6 +40,10 @@ export async function action({ request }: ActionFunctionArgs) {
 export default function LoginPage() {
 	const actionData = useActionData<typeof action>();
 
+	if (typeof actionData === "string") {
+		console.log("dat ging fout");
+	}
+
 	return (
 		<>
 			<h1 className="font-semibold text-xl mb-3">Log in</h1>
@@ -59,6 +63,11 @@ export default function LoginPage() {
 						required
 						placeholder="Password"
 					/>
+					<p>
+						<Link to="/wachtwoord-vergeten">
+							Ik ben mijn wachtwoord vergeten
+						</Link>
+					</p>
 				</div>
 				{actionData ? (
 					<p className="text-red-600 font-bold">
