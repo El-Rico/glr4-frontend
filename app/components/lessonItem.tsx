@@ -2,6 +2,7 @@ import { Link } from "@remix-run/react";
 import { format, setDefaultOptions } from "date-fns";
 import { nl } from "date-fns/locale";
 import { Button } from "./ui/button";
+import { LockClosedIcon } from "@radix-ui/react-icons";
 
 setDefaultOptions({ locale: nl });
 
@@ -44,9 +45,9 @@ export default function LessonItem({ id, date, showButton }: LessonItemProps) {
       {showButton && !canReschedule && (
         <Button
           disabled
-          className="text-md block rounded bg-gray-500 px-3 py-2 text-white hover:bg-gray-700"
+          className="text-md block flex space-x-2 rounded bg-gray-900 px-3 py-2 text-white hover:bg-gray-700"
         >
-          Geblokkeerd
+          <LockClosedIcon /> <span>Les verzetten</span>
         </Button>
       )}
     </div>

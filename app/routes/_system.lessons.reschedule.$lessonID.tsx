@@ -101,7 +101,9 @@ export default function ChangeLesson() {
   const { selectedLesson, availableLessons } = useLoaderData<typeof loader>();
   const navigation = useNavigation();
   const matches = useMatches();
-  const userLessons = matches.find((match) => match.id === "routes/lessons");
+  const userLessons = matches.find(
+    (match) => match.id === "routes/_system.lessons",
+  );
   invariant(userLessons, "No user lessons.");
   const userLessonsData: UserLessonsData = userLessons.data?.loadedLessons.data;
 
