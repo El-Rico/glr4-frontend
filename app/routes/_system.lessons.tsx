@@ -32,14 +32,29 @@ export default function LessonsPage() {
       {credit > 0 && <CreditItem credit={credit} showButton={true} />}
       <h1 className="mb-3 text-xl font-semibold">Je aankomende lessen</h1>
       <div>
-        {loadedLessons.data.map((lesson: Lesson) => (
-          <LessonItem
-            key={lesson.id}
-            id={lesson.id}
-            date={lesson.attributes.date}
-            showButton={true}
-          />
-        ))}
+        {!loadedLessons.data.length ? (
+          <p>
+            Er zijn nog geen lessen toegekend. Heb nog even geduld of neem
+            contact op via{" "}
+            <a
+              className="underline hover:no-underline"
+              href="mailto:info@genevievelumeij.nl"
+              title="Stuur een mail naar info@genevievelumeij.nl"
+            >
+              e-mail
+            </a>{" "}
+            of Whatsapp.
+          </p>
+        ) : (
+          loadedLessons.data.map((lesson: Lesson) => (
+            <LessonItem
+              key={lesson.id}
+              id={lesson.id}
+              date={lesson.attributes.date}
+              showButton={true}
+            />
+          ))
+        )}
       </div>
       <Outlet />
     </>
