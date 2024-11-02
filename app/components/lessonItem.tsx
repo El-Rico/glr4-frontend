@@ -10,9 +10,15 @@ interface LessonItemProps {
   id: string;
   date: string;
   showButton: boolean;
+  cancelled: boolean;
 }
 
-export default function LessonItem({ id, date, showButton }: LessonItemProps) {
+export default function LessonItem({
+  id,
+  date,
+  showButton,
+  cancelled,
+}: LessonItemProps) {
   const lessonDate = new Date(date);
   const currentDate = new Date();
   const rescheduleDeadline = 8;
@@ -23,15 +29,22 @@ export default function LessonItem({ id, date, showButton }: LessonItemProps) {
   return (
     <div
       key={id}
-      className="mb-1 flex items-center justify-between rounded-md border border-solid border-gray-300 bg-white p-3 pr-4 align-middle"
+      className="space-between mb-1 flex items-center justify-between rounded-md border border-solid border-gray-300 bg-white p-3 pr-4"
     >
-      <div className="flex items-baseline gap-4">
+      <div className="flex items-center gap-4">
         <div className="box-border w-[60px] rounded bg-zinc-700 p-2 text-center text-2xl font-semibold uppercase text-white">
           {format(date, "EEEEEE")}
         </div>
-        <div className="text-lg font-bold">
-          {format(date, "d MMMM yyyy")} <span className="font-normal">/</span>{" "}
-          {format(date, "HH:mm")} uur
+        <div className="text-lg">
+          <div className="flex justify-center gap-2 font-bold">
+            {format(date, "dd MMM yyyy")}{" "}
+            {cancelled && (
+              <span className="rounded-xl bg-red-600 px-3 pb-[3px] pt-[4px] text-center text-sm font-semibold text-white">
+                Gaat niet door
+              </span>
+            )}
+          </div>
+          <div>{format(date, "HH:mm")} uur</div>
         </div>
       </div>
       {showButton && canReschedule && (

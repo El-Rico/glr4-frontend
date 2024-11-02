@@ -5,7 +5,7 @@ import { getSession } from "~/session";
 
 export const meta: MetaFunction = () => {
   return [
-    { title: "GL Reservations" },
+    { title: "GL Lesportaal" },
     { name: "description", content: "Reserveer en plan je lessen hier" },
   ];
 };

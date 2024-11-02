@@ -33,6 +33,7 @@ interface UserLessonData {
   id: number;
   attributes: {
     capacity: number;
+    cancelled: boolean;
     users_permissions_users: {
       data: {
         attributes: {
@@ -111,16 +112,21 @@ export default function BuyLesson() {
   let userLessonsIds: number[] = [];
   userLessonsData.map((lesson: object) => userLessonsIds.push(lesson.id));
 
+  // Filter out current users lessons
   const filteredLessonsUser = availableLessons.data.filter(
-    // Filter out current users lessons
     (lesson: UserLessonData) => !userLessonsIds.includes(lesson.id),
   );
 
-  const filteredLessons = filteredLessonsUser.filter(
-    // Filter out full lessons
+  // Filter out full lessons
+  const filteredLessonsCap = filteredLessonsUser.filter(
     (lesson: UserLessonData) =>
       lesson.attributes.users_permissions_users.data.attributes.count !==
       lesson.attributes.capacity,
+  );
+
+  // Filter out cancelled lessons
+  const filteredLessons = filteredLessonsCap.filter(
+    (lesson: UserLessonData) => lesson.attributes.cancelled !== true,
   );
 
   return (

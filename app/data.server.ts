@@ -13,7 +13,7 @@ export async function getLessons(userID: string, authToken: string) {
         $gt: new Date(),
       },
     },
-    fields: ["date", "datename"],
+    fields: ["date", "datename", "cancelled"],
     pagination: {
       pageSize: 15,
       page: 1,
@@ -60,7 +60,7 @@ export async function getAvailableLessons(authToken: string) {
         },
       ],
     },
-    fields: ["date", "datename", "capacity"],
+    fields: ["date", "datename", "capacity", "cancelled"],
     populate: {
       users_permissions_users: { count: true },
     },

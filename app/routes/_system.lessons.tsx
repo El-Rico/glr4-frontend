@@ -9,6 +9,7 @@ interface Lesson {
   id: string;
   attributes: {
     date: string;
+    cancelled: boolean;
   };
 }
 
@@ -52,6 +53,7 @@ export default function LessonsPage() {
               id={lesson.id}
               date={lesson.attributes.date}
               showButton={true}
+              cancelled={lesson.attributes.cancelled}
             />
           ))
         )}

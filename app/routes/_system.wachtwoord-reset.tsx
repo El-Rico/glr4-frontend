@@ -24,8 +24,6 @@ export async function action({ request }: ActionFunctionArgs) {
   });
   const data = await response.json();
 
-  console.log(data);
-
   if (data.data === null) {
     return data.error.message;
   }
