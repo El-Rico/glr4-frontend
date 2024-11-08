@@ -2,6 +2,23 @@ import qs from "qs";
 
 const url = process.env.STRAPI_URL || "http://localhost:1337";
 
+export async function getPageContent(slug: string, authToken: string) {
+  try {
+    const response = await fetch(url + "/api/pages/" + slug, {
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+      },
+    });
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.log(error);
+    throw new Response("Oh no! Something went wrong!", {
+      status: 500,
+    });
+  }
+}
+
 export async function getLessons(userID: string, authToken: string) {
   const query = qs.stringify({
     sort: ["date:asc"],
@@ -38,7 +55,6 @@ export async function getLessons(userID: string, authToken: string) {
   }
 }
 
-// Get the lessons user is NOT attending
 export async function getAvailableLessons(authToken: string) {
   const dateStart = new Date();
   let dateEnd = new Date();

@@ -7,7 +7,6 @@ import {
 import {
   Form,
   Link,
-  Params,
   useLoaderData,
   useMatches,
   useNavigation,
