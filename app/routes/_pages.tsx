@@ -1,5 +1,6 @@
 import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import { Outlet, useLoaderData } from "@remix-run/react";
+import Footer from "~/components/footer";
 import Header from "~/components/header";
 import { getSession } from "~/session";
 
@@ -25,6 +26,7 @@ export default function PagesLayout() {
       <main className="mx-auto max-w-3xl rounded-md border border-gray-300 bg-white bg-opacity-80 p-4">
         <Outlet />
       </main>
+      <Footer />
     </>
   );
 }

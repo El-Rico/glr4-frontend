@@ -37,9 +37,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 export default function App() {
   return (
     <div className="mx-auto max-w-xl lg:max-w-7xl">
-      {/* <main className="mx-auto max-w-3xl rounded-md border border-gray-300 bg-white bg-opacity-80 p-4"> */}
       <Outlet />
-      {/* </main> */}
     </div>
   );
 }

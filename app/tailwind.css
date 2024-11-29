@@ -10,12 +10,24 @@ nav {
   @apply text-sm;
 }
 
-nav a {
+header nav a {
   @apply rounded bg-gray-100 px-3 py-2;
 }
 
-.active {
+header nav .active {
   @apply bg-zinc-950 font-bold text-white;
+}
+
+footer nav a {
+  @apply underline;
+}
+
+footer nav a.active {
+  @apply font-bold;
+}
+
+footer nav a:hover {
+  @apply no-underline;
 }
 
 h1,
