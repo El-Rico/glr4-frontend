@@ -10,6 +10,7 @@ export async function action({ request }: ActionFunctionArgs) {
   const response = await fetch("http://localhost:1337/api/auth/local", {
     method: "POST",
     headers: {
+      Authorization: `Bearer ${process.env.STRAPI_API_TOKEN} `,
       Accept: "application/json",
       "Content-Type": "application/json;charset=UTF-8",
     },
