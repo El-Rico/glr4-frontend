@@ -6,11 +6,14 @@ export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
   const { identifier, password } = Object.fromEntries(formData);
   const session = await getSession(request.headers.get("Cookie"));
+  const baseURL =
+    process.env.NODE_ENV === "development"
+      ? "http://localhost:1337"
+      : "https://srv636619.hstgr.cloud";
 
-  const response = await fetch("http://localhost:1337/api/auth/local", {
+  const response = await fetch(baseURL + "/api/auth/local", {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${process.env.STRAPI_API_TOKEN}`,
       Accept: "application/json",
       "Content-Type": "application/json;charset=UTF-8",
     },
@@ -19,6 +22,7 @@ export async function action({ request }: ActionFunctionArgs) {
       password: password,
     }),
   });
+
   const data = await response.json();
 
   if (data.data === null) {

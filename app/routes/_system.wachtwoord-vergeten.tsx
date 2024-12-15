@@ -5,9 +5,12 @@ export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
   const { emailaddress } = Object.fromEntries(formData);
 
-  const url = process.env.STRAPI_URL || "http://localhost:1337";
+  const baseURL =
+    process.env.NODE_ENV === "development"
+      ? "http://localhost:1337"
+      : "https://srv636619.hstgr.cloud";
 
-  const response = await fetch(url + "/api/auth/forgot-password", {
+  const response = await fetch(baseURL + "/api/auth/forgot-password", {
     method: "POST",
     headers: {
       Accept: "application/json",
