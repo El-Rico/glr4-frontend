@@ -7,11 +7,11 @@ const url =
 
 const authToken = process.env.STRAPI_TOKEN;
 
-export async function getPageContent(slug: string) {
+export async function getPageContent(slug: string, personalAuthToken: string) {
   try {
     const response = await fetch(url + "/api/pages/" + slug, {
       headers: {
-        Authorization: `Bearer ${authToken}`,
+        Authorization: `Bearer ${personalAuthToken}`,
       },
     });
     const data = await response.json();
@@ -24,7 +24,7 @@ export async function getPageContent(slug: string) {
   }
 }
 
-export async function getLessons(userID: string) {
+export async function getLessons(userID: string, personalAuthToken: string) {
   const query = qs.stringify({
     sort: ["date:asc"],
     filters: {
@@ -47,7 +47,7 @@ export async function getLessons(userID: string) {
   try {
     const response = await fetch(url + "/api/lessons?" + query, {
       headers: {
-        Authorization: `Bearer ${authToken}`,
+        Authorization: `Bearer ${personalAuthToken}`,
       },
     });
     const data = await response.json();
@@ -60,7 +60,7 @@ export async function getLessons(userID: string) {
   }
 }
 
-export async function getAvailableLessons() {
+export async function getAvailableLessons(personalAuthToken: string) {
   const dateStart = new Date();
   let dateEnd = new Date();
   dateEnd = new Date(dateEnd.setMonth(dateEnd.getMonth() + 2));
@@ -96,7 +96,7 @@ export async function getAvailableLessons() {
   try {
     const response = await fetch(url + "/api/lessons?" + query, {
       headers: {
-        Authorization: `Bearer ${authToken}`,
+        Authorization: `Bearer ${personalAuthToken}`,
       },
     });
     const data = await response.json();
@@ -109,11 +109,11 @@ export async function getAvailableLessons() {
   }
 }
 
-export async function getLesson(lessonID: string) {
+export async function getLesson(lessonID: string, personalAuthToken: string) {
   try {
     const response = await fetch(url + "/api/lessons/" + lessonID, {
       headers: {
-        Authorization: `Bearer ${authToken}`,
+        Authorization: `Bearer ${personalAuthToken}`,
       },
     });
     const data = await response.json();
@@ -129,6 +129,7 @@ export async function getLesson(lessonID: string) {
 export async function rescheduleLesson(
   oldLesson: number,
   newLesson: number,
+  personalAuthToken: string,
   userID: string,
 ) {
   const body: object = {
@@ -149,7 +150,7 @@ export async function rescheduleLesson(
     const response = await fetch(url + `/api/users/${userID}?`, {
       method: "put",
       headers: {
-        Authorization: `Bearer ${authToken}`,
+        Authorization: `Bearer ${personalAuthToken}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify(body),
@@ -167,6 +168,7 @@ export async function rescheduleLesson(
 export async function buyLesson(
   credit: number,
   newLesson: number,
+  personalAuthToken: string,
   userID: string,
 ) {
   const body: object = {
@@ -184,7 +186,7 @@ export async function buyLesson(
     const response = await fetch(url + `/api/users/${userID}?`, {
       method: "put",
       headers: {
-        Authorization: `Bearer ${authToken}`,
+        Authorization: `Bearer ${personalAuthToken}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify(body),
@@ -199,7 +201,7 @@ export async function buyLesson(
   }
 }
 
-export async function acceptTerms(userID: string) {
+export async function acceptTerms(userID: string, personalAuthToken: string) {
   const body: object = {
     acceptedterms: true,
   };
@@ -208,7 +210,7 @@ export async function acceptTerms(userID: string) {
     const response = await fetch(url + `/api/users/${userID}`, {
       method: "put",
       headers: {
-        Authorization: `Bearer ${authToken}`,
+        Authorization: `Bearer ${personalAuthToken}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify(body),
