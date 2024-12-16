@@ -1,8 +1,13 @@
 import qs from "qs";
 
-const url = process.env.STRAPI_URL || "http://localhost:1337";
+const url =
+  process.env.NODE_ENV === "development"
+    ? "http://localhost:1337"
+    : "https://srv636619.hstgr.cloud";
 
-export async function getPageContent(slug: string, authToken: string) {
+const authToken = process.env.STRAPI_TOKEN;
+
+export async function getPageContent(slug: string) {
   try {
     const response = await fetch(url + "/api/pages/" + slug, {
       headers: {
@@ -19,7 +24,7 @@ export async function getPageContent(slug: string, authToken: string) {
   }
 }
 
-export async function getLessons(userID: string, authToken: string) {
+export async function getLessons(userID: string) {
   const query = qs.stringify({
     sort: ["date:asc"],
     filters: {
@@ -55,7 +60,7 @@ export async function getLessons(userID: string, authToken: string) {
   }
 }
 
-export async function getAvailableLessons(authToken: string) {
+export async function getAvailableLessons() {
   const dateStart = new Date();
   let dateEnd = new Date();
   dateEnd = new Date(dateEnd.setMonth(dateEnd.getMonth() + 2));
@@ -104,7 +109,7 @@ export async function getAvailableLessons(authToken: string) {
   }
 }
 
-export async function getLesson(lessonID: string, authToken: string) {
+export async function getLesson(lessonID: string) {
   try {
     const response = await fetch(url + "/api/lessons/" + lessonID, {
       headers: {
@@ -124,7 +129,6 @@ export async function getLesson(lessonID: string, authToken: string) {
 export async function rescheduleLesson(
   oldLesson: number,
   newLesson: number,
-  authToken: string,
   userID: string,
 ) {
   const body: object = {
@@ -163,7 +167,6 @@ export async function rescheduleLesson(
 export async function buyLesson(
   credit: number,
   newLesson: number,
-  authToken: string,
   userID: string,
 ) {
   const body: object = {
@@ -196,7 +199,7 @@ export async function buyLesson(
   }
 }
 
-export async function acceptTerms(userID: string, authToken: string) {
+export async function acceptTerms(userID: string) {
   const body: object = {
     acceptedterms: true,
   };
