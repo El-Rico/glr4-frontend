@@ -1,5 +1,7 @@
+import { ReloadIcon } from "@radix-ui/react-icons";
 import { ActionFunctionArgs, redirect } from "@remix-run/node";
-import { Form, Link, useActionData } from "@remix-run/react";
+import { Form, Link, useActionData, useNavigation } from "@remix-run/react";
+import { Button } from "~/components/ui/button";
 import { getSession, commitSession } from "~/session";
 
 export async function action({ request }: ActionFunctionArgs) {
@@ -48,6 +50,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
 export default function LoginPage() {
   const actionData = useActionData<typeof action>();
+  const navigation = useNavigation();
 
   if (typeof actionData === "string") {
     console.log("dat ging fout");
@@ -88,9 +91,22 @@ export default function LoginPage() {
         ) : (
           ""
         )}
-        <button className="mt-8 w-full rounded-md bg-sky-600 px-3 py-2 font-medium text-white hover:bg-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-600 focus:ring-offset-2 focus:ring-offset-gray-900">
+        {navigation.state === "idle" ? (
+          <Button
+            type="submit"
+            className="mt-4 w-full bg-sky-600 px-3 py-2 text-base font-bold"
+          >
+            Log in
+          </Button>
+        ) : (
+          <Button disabled className="mt-4 w-full px-3 py-2 text-base">
+            <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+            Je wordt ingelogd...
+          </Button>
+        )}
+        {/* <button className="mt-8 w-full rounded-md bg-sky-600 px-3 py-2 font-medium text-white hover:bg-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-600 focus:ring-offset-2 focus:ring-offset-gray-900">
           Log in
-        </button>
+        </button> */}
       </Form>
     </>
   );
